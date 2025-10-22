@@ -48,7 +48,6 @@ class WelcomeScreen(Screen):
         yield Header()
         yield Container(
             Vertical(
-                Static(""),
                 Static(
                     "╔═══════════════════════════════════════════════════╗",
                     classes="banner"
@@ -61,10 +60,8 @@ class WelcomeScreen(Screen):
                     "╚═══════════════════════════════════════════════════╝",
                     classes="banner"
                 ),
-                Static(""),
                 Label(f"🖥️  Detected: {self.distro_info.pretty_name}", id="distro-info"),
                 Label(f"📦 Package Manager: {self.distro_info.package_manager.upper()}", id="pm-info"),
-                Static(""),
                 Horizontal(
                     Button(f"{get_icon('apps')} Install Applications", id="btn-apps", variant="primary"),
                     Button(f"{get_icon('tweak')} System Tweaks", id="btn-tweaks", variant="primary"),
@@ -75,9 +72,7 @@ class WelcomeScreen(Screen):
                     Button(f"{get_icon('exit')} Exit", id="btn-exit", variant="error"),
                     classes="button-row"
                 ),
-                Static(""),
                 Label(f"{get_icon('tip')} Tip: {self.tip}", classes="tip-text"),
-                Static(""),
                 Label(
                     ShortcutGuide.format_shortcuts(ShortcutGuide.welcome_screen(), max_width=60),
                     classes="shortcuts-guide"

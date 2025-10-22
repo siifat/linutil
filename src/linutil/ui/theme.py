@@ -54,30 +54,31 @@ Container {
 /* ============================================ */
 
 #welcome-container {
-    width: 90;
+    width: 80;
     height: auto;
     background: $surface;
     border: round $border-accent;
-    padding: 3 4;
+    padding: 1 2;
 }
 
 .banner {
     text-align: center;
     color: $accent;
     text-style: bold;
+    margin: 0;
 }
 
 #distro-info {
     text-align: center;
     color: $primary;
     text-style: bold;
-    margin: 1 0;
+    margin: 0;
 }
 
 #pm-info {
     text-align: center;
     color: $success;
-    margin-bottom: 1;
+    margin: 0 0 1 0;
 }
 
 /* ============================================ */
@@ -88,7 +89,7 @@ Container {
     align: center middle;
     width: 100%;
     height: auto;
-    margin: 1 0;
+    margin: 0;
 }
 
 .button-row Button {
@@ -157,14 +158,14 @@ Button.-error:hover {
     text-align: center;
     text-style: bold;
     color: $accent;
-    margin: 0 0 1 0;
+    margin: 0;
     text-style: bold underline;
 }
 
 .pm-label {
     text-align: center;
     color: $success;
-    margin: 0 0 1 0;
+    margin: 0;
 }
 
 /* ============================================ */
@@ -214,25 +215,8 @@ Button.-error:hover {
     color: $accent;
     text-style: bold;
     background: $surface;
-    padding: 1 2;
-    margin: 1 0;
-    border: tall $border;
-}
-
-#apps-container {
-    height: 1fr;
-    border: round $border;
-    background: $surface-light;
-    padding: 1;
-    margin: 1 0;
-}
-
-.category-label {
-    color: $accent;
-    text-style: bold;
-    background: $surface;
-    padding: 1 2;
-    margin: 1 0;
+    padding: 0 1;
+    margin: 0;
     border: tall $border;
 }
 
@@ -240,16 +224,16 @@ Button.-error:hover {
     text-style: bold;
     color: $accent;
     background: $surface;
-    padding: 0 2;
-    margin: 1 0 0 0;
+    padding: 0 1;
+    margin: 0;
 }
 
 .section-header {
     text-style: bold;
     color: $accent;
     background: $surface;
-    padding: 0 2;
-    margin: 1 0 0 0;
+    padding: 0 1;
+    margin: 0;
 }
 
 .no-apps-message {
@@ -267,7 +251,7 @@ Button.-error:hover {
 .subtitle {
     text-align: center;
     color: $text-muted;
-    margin: 0 0 1 0;
+    margin: 0;
 }
 
 .restart-warning {
@@ -314,7 +298,8 @@ AppCheckbox {
     width: 100%;
     height: auto;
     background: transparent;
-    padding: 0 1;
+    padding: 0;
+    margin: 0;
 }
 
 AppCheckbox:hover {
@@ -327,7 +312,8 @@ AppCheckbox Checkbox {
 
 AppCheckbox Vertical {
     width: 1fr;
-    margin: 0 1;
+    margin: 0 0 0 1;
+    padding: 0;
 }
 
 /* ============================================ */
@@ -353,7 +339,7 @@ AppCheckbox Vertical {
 
 .tweak-checkbox-container {
     background: transparent;
-    padding: 1 2;
+    padding: 0;
     margin: 0;
     border: none;
 }
@@ -378,7 +364,8 @@ TweakCheckbox {
     width: 100%;
     height: auto;
     background: transparent;
-    padding: 0 1;
+    padding: 0;
+    margin: 0;
 }
 
 TweakCheckbox:hover {
@@ -391,7 +378,8 @@ TweakCheckbox Checkbox {
 
 TweakCheckbox Vertical {
     width: 1fr;
-    margin: 0 1;
+    margin: 0 0 0 1;
+    padding: 0;
 }
 
 /* ============================================ */
@@ -422,7 +410,7 @@ Checkbox > .toggle--label {
     text-align: center;
     color: $warning;
     text-style: italic;
-    margin: 1 2;
+    margin: 1 0 0 0;
     background: $surface-light;
     padding: 1;
     border: tall $border;
@@ -432,7 +420,8 @@ Checkbox > .toggle--label {
     text-align: center;
     color: $text-muted;
     text-style: italic;
-    margin: 1 2;
+    margin: 1 0 0 0;
+    padding: 0;
 }
 
 .hint {
