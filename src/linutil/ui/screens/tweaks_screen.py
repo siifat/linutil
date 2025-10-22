@@ -14,6 +14,7 @@ from textual import events
 from linutil.core.config_loader import TweakConfig, TweakDefinition
 from linutil.core.executor import PrivilegeHandler, CommandExecutor
 from linutil.core.terminal_executor import TerminalExecutor
+from linutil.ui.theme import get_icon
 
 
 class TweakCheckbox(Horizontal):
@@ -70,7 +71,7 @@ class TweaksScreen(Screen):
         
         yield Container(
             Vertical(
-                Label("🔧 System Tweaks & Optimizations", classes="screen-title"),
+                Label(f"{get_icon('tweak')} System Tweaks & Optimizations", classes="screen-title"),
                 Label(
                     "Select tweaks to apply to your system",
                     classes="subtitle"
@@ -78,8 +79,8 @@ class TweaksScreen(Screen):
                 
                 # Action buttons
                 Horizontal(
-                    Button("✓ Select All", id="btn-select-all", variant="primary"),
-                    Button("✗ Select None", id="btn-select-none", variant="default"),
+                    Button(f"{get_icon('select_all')} Select All", id="btn-select-all", variant="primary"),
+                    Button(f"{get_icon('select_none')} Select None", id="btn-select-none", variant="default"),
                     Button("⚡ Apply Selected", id="btn-apply", variant="success"),
                     classes="button-row"
                 ),
@@ -87,16 +88,16 @@ class TweaksScreen(Screen):
                 # Scrollable tweaks list
                 ScrollableContainer(
                     *self._create_tweak_sections(),
-                    id="tweaks-container"
+                    id="tweaks-list-container"
                 ),
                 
                 # Bottom buttons
                 Horizontal(
-                    Button("◀ Back", id="btn-back", variant="default"),
+                    Button(f"{get_icon('back')} Back", id="btn-back", variant="default"),
                     classes="button-row"
                 ),
                 
-                id="tweaks-screen-container"
+                id="tweaks-container"
             ),
             id="main-container"
         )
@@ -268,93 +269,4 @@ class TweaksScreen(Screen):
             else:
                 msg = "Tweak application cancelled or failed"
             self.app.notify(msg, severity="warning")
-    
 
-# CSS for the tweaks screen
-TWEAKS_SCREEN_CSS = """
-#tweaks-screen-container {
-    width: 90%;
-    max-width: 120;
-    height: 100%;
-    border: solid $accent;
-    padding: 1 2;
-}
-
-#tweaks-container {
-    height: 1fr;
-    border: solid $primary;
-    padding: 1;
-    margin: 0;
-}
-
-.section-header {
-    text-style: bold;
-    color: $accent;
-    background: $surface;
-    padding: 0 2;
-    margin: 1 0 0 0;
-}
-
-TweakCheckbox {
-    height: auto;
-    margin: 0;
-    padding: 0 1;
-}
-
-TweakCheckbox:hover {
-    background: $boost;
-}
-
-TweakCheckbox Vertical {
-    margin: 0 0 0 1;
-    padding: 0;
-    height: auto;
-}
-
-TweakCheckbox Checkbox {
-    padding: 0;
-    width: auto;
-}
-
-TweakCheckbox Label {
-    width: 1fr;
-    height: auto;
-}
-
-.tweak-name {
-    color: $text;
-    text-style: bold;
-    height: 1;
-}
-
-.tweak-description {
-    color: $text-muted;
-    text-style: italic;
-    height: 1;
-}
-
-.restart-warning {
-    color: $warning;
-    text-style: italic;
-    padding: 0 0 0 4;
-    margin: 0;
-    height: 1;
-}
-
-.subtitle {
-    text-align: center;
-    color: $text-muted;
-}
-
-.status-label {
-    text-align: center;
-    color: $warning;
-    text-style: bold;
-}
-
-.no-tweaks-message {
-    text-align: center;
-    color: $warning;
-    padding: 5;
-}
-"""

@@ -17,10 +17,11 @@ from linutil.core.terminal_executor import TerminalExecutor
 from linutil.managers.base_manager import PackageManagerFactory
 from linutil.managers.apt_manager import AptManager
 from linutil.managers.dnf_manager import DnfManager
-from linutil.ui.screens.apps_screen import AppsScreen, APPS_SCREEN_CSS
-from linutil.ui.screens.tweaks_screen import TweaksScreen, TWEAKS_SCREEN_CSS
+from linutil.ui.screens.apps_screen import AppsScreen
+from linutil.ui.screens.tweaks_screen import TweaksScreen
 from linutil.ui.tips import get_random_tip
 from linutil.ui.shortcuts import ShortcutGuide
+from linutil.ui.theme import THEME_CSS, get_icon
 
 # Minimum terminal size for proper display
 MIN_WIDTH = 80
@@ -53,7 +54,7 @@ class WelcomeScreen(Screen):
                     classes="banner"
                 ),
                 Static(
-                    "║      LinUtil - Linux Post-Install Setup          ║",
+                    "║   🐧 LinUtil - Linux Post-Install Setup 🚀       ║",
                     classes="banner"
                 ),
                 Static(
@@ -61,21 +62,21 @@ class WelcomeScreen(Screen):
                     classes="banner"
                 ),
                 Static(""),
-                Label(f"Detected: {self.distro_info.pretty_name}", id="distro-info"),
-                Label(f"Package Manager: {self.distro_info.package_manager.upper()}", id="pm-info"),
+                Label(f"🖥️  Detected: {self.distro_info.pretty_name}", id="distro-info"),
+                Label(f"📦 Package Manager: {self.distro_info.package_manager.upper()}", id="pm-info"),
                 Static(""),
                 Horizontal(
-                    Button("📦 Install Applications", id="btn-apps", variant="primary"),
-                    Button("🔧 System Tweaks", id="btn-tweaks", variant="primary"),
+                    Button(f"{get_icon('apps')} Install Applications", id="btn-apps", variant="primary"),
+                    Button(f"{get_icon('tweak')} System Tweaks", id="btn-tweaks", variant="primary"),
                     classes="button-row"
                 ),
                 Horizontal(
-                    Button("🔄 Update System", id="btn-update", variant="success"),
-                    Button("❌ Exit", id="btn-exit", variant="error"),
+                    Button(f"{get_icon('update')} Update System", id="btn-update", variant="success"),
+                    Button(f"{get_icon('exit')} Exit", id="btn-exit", variant="error"),
                     classes="button-row"
                 ),
                 Static(""),
-                Label(f"💡 Tip: {self.tip}", classes="tip-text"),
+                Label(f"{get_icon('tip')} Tip: {self.tip}", classes="tip-text"),
                 Static(""),
                 Label(
                     ShortcutGuide.format_shortcuts(ShortcutGuide.welcome_screen(), max_width=60),
@@ -136,8 +137,8 @@ class UpdateScreen(Screen):
         
         yield Container(
             Vertical(
-                Label("🔄 System Update", classes="screen-title"),
-                Label(f"Package Manager: {self.package_manager.upper()}", classes="pm-label"),
+                Label(f"{get_icon('update')} System Update", classes="screen-title"),
+                Label(f"📦 Package Manager: {self.package_manager.upper()}", classes="pm-label"),
                 
                 # Info section
                 ScrollableContainer(
@@ -145,22 +146,22 @@ class UpdateScreen(Screen):
                         Label("This will update all installed packages on your system.", classes="update-info"),
                         Static(""),
                         Label("The update will run in an interactive terminal where you can:", classes="update-info"),
-                        Label("  • See real-time output", classes="info-item"),
-                        Label("  • Enter your password when prompted", classes="info-item"),
-                        Label("  • Confirm package installations", classes="info-item"),
+                        Label(f"  {get_icon('success')} See real-time output", classes="info-item"),
+                        Label(f"  {get_icon('success')} Enter your password when prompted", classes="info-item"),
+                        Label(f"  {get_icon('success')} Confirm package installations", classes="info-item"),
                     ),
                     id="update-info-container"
                 ),
                 
                 # Action buttons
                 Horizontal(
-                    Button("🔄 Start Update", id="btn-start-update", variant="success"),
+                    Button(f"{get_icon('update')} Start Update", id="btn-start-update", variant="success"),
                     classes="button-row"
                 ),
                 
                 # Bottom buttons
                 Horizontal(
-                    Button("◀ Back", id="btn-back", variant="default"),
+                    Button(f"{get_icon('back')} Back", id="btn-back", variant="default"),
                     classes="button-row"
                 ),
                 
@@ -241,116 +242,8 @@ class UpdateScreen(Screen):
 class LinUtilApp(App):
     """Main LinUtil application."""
     
-    CSS = """
-    #main-container {
-        align: center middle;
-        width: 100%;
-        height: 100%;
-    }
-    
-    #welcome-container {
-        width: 80;
-        height: auto;
-        border: solid $accent;
-        padding: 2;
-    }
-    
-    #update-container {
-        width: 90%;
-        max-width: 120;
-        height: 100%;
-        border: solid $accent;
-        padding: 1 2;
-    }
-    
-    #update-info-container {
-        height: 1fr;
-        border: solid $primary;
-        padding: 1;
-        margin: 0;
-    }
-    
-    .update-info {
-        color: $text;
-        margin: 0 0 0 0;
-    }
-    
-    .info-item {
-        color: $text-muted;
-        margin: 0 0 0 2;
-    }
-    
-    .banner {
-        text-align: center;
-        color: $accent;
-    }
-    
-    .screen-title {
-        text-align: center;
-        text-style: bold;
-        color: $accent;
-    }
-    
-    #distro-info, #pm-info {
-        text-align: center;
-        margin-bottom: 1;
-    }
-    
-    .pm-label {
-        text-align: center;
-        color: $success;
-    }
-    
-    .button-row {
-        align: center middle;
-        width: 100%;
-        height: auto;
-        margin: 1;
-    }
-    
-    .button-row Button {
-        margin: 0 1;
-    }
-    
-    .hint {
-        text-align: center;
-        color: $text-muted;
-        text-style: italic;
-    }
-    
-    .tip-text {
-        text-align: center;
-        color: $primary;
-        text-style: italic bold;
-        margin: 0 2;
-    }
-    
-    .shortcuts-guide {
-        text-align: center;
-        color: $text-muted;
-        text-style: italic;
-        margin: 0 2;
-    }
-    
-    .info-label {
-        color: $text-muted;
-        margin: 0 2;
-    }
-    
-    .status-label {
-        text-align: center;
-        color: $warning;
-        text-style: bold;
-        min-height: 3;
-    }
-    
-    .size-warning {
-        text-align: center;
-        color: $error;
-        text-style: bold;
-        padding: 2;
-    }
-    """ + APPS_SCREEN_CSS + TWEAKS_SCREEN_CSS
+    # Use the modern theme CSS
+    CSS = THEME_CSS
     
     TITLE = "LinUtil - Linux Post-Install Setup"
     

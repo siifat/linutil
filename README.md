@@ -8,14 +8,16 @@ A modern, distro-agnostic TUI (Terminal User Interface) application for streamli
 
 ## ✨ Features
 
+- **🎨 Modern UI**: Professional GitHub Dark-inspired theme with rounded borders and smooth interactions
 - **📦 Application Installer**: Browse and install applications by category with multi-select support
 - **🔧 System Tweaks**: Apply system optimizations and tweaks with one click
 - **🔄 System Updates**: Interactive system update with real-time output
 - **🎯 Distro Detection**: Automatically detects your Linux distribution
 - **💻 Interactive Terminal**: Full password prompts and interactive command support
-- **🎨 Modern TUI**: Beautiful terminal interface built with Textual
+- **�️ Task Indicators**: Clear labels showing what each action does (Install, File Modification, etc.)
 - **💡 Linux Tips**: Learn Linux commands while you work
 - **⌨️ Keyboard Shortcuts**: Navigate efficiently with keyboard shortcuts
+- **♿ Accessible**: High contrast colors and keyboard-first navigation
 
 ## 🚀 Quick Start
 
