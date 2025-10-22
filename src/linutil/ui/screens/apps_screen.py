@@ -24,12 +24,15 @@ class AppCheckbox(Horizontal):
         super().__init__()
         self.app_def = app  # Renamed from 'app' to avoid conflict with Textual's .app property
         self.package_manager = package_manager
-        self.checkbox = Checkbox(self.app_def.name, id=f"app_{self.app_def.id}")
+        self.checkbox = Checkbox("", id=f"app_{self.app_def.id}")  # Empty label for checkbox
     
     def compose(self) -> ComposeResult:
         """Create child widgets."""
         yield self.checkbox
-        yield Label(f" - {self.app_def.description}", classes="app-description")
+        yield Vertical(
+            Label(self.app_def.name, classes="app-name"),
+            Label(self.app_def.description, classes="app-description"),
+        )
 
 
 class AppsScreen(Screen):
@@ -61,14 +64,11 @@ class AppsScreen(Screen):
         
         yield Container(
             Vertical(
-                Static(""),
                 Label("📦 Application Installer", classes="screen-title"),
-                Static(""),
                 Label(
                     f"Package Manager: {self.package_manager.upper()}",
                     classes="pm-label"
                 ),
-                Static(""),
                 
                 # Action buttons
                 Horizontal(
@@ -77,7 +77,6 @@ class AppsScreen(Screen):
                     Button("📥 Install Selected", id="btn-install", variant="success"),
                     classes="button-row"
                 ),
-                Static(""),
                 
                 # Scrollable app list
                 ScrollableContainer(
@@ -85,13 +84,11 @@ class AppsScreen(Screen):
                     id="apps-container"
                 ),
                 
-                Static(""),
+                # Bottom buttons
                 Horizontal(
                     Button("◀ Back", id="btn-back", variant="default"),
                     classes="button-row"
                 ),
-                Static(""),
-                Label("", id="status-label", classes="status-label"),
                 
                 id="apps-screen-container"
             ),
@@ -119,14 +116,16 @@ class AppsScreen(Screen):
             name = category.get('name', 'Unknown')
             apps = category.get('applications', [])
             
-            widgets.append(Static(""))
+            # Add spacing only before first category
+            if widgets:
+                widgets.append(Static(""))
+            
             widgets.append(
                 Label(
                     f"{icon} {name} ({len(apps)} apps)",
                     classes="category-header"
                 )
             )
-            widgets.append(Static(""))
             
             # Apps in this category
             for app_data in apps:
@@ -263,24 +262,38 @@ APPS_SCREEN_CSS = """
 #apps-screen-container {
     width: 90%;
     max-width: 120;
-    height: auto;
+    height: 100%;
     border: solid $accent;
-    padding: 2;
+    padding: 1 2;
 }
 
 #apps-container {
-    height: 100%;
-    max-height: 40;
+    height: 1fr;
     border: solid $primary;
     padding: 1;
-    margin: 1 0;
+    margin: 0;
 }
 
 .category-header {
     text-style: bold;
     color: $accent;
     background: $surface;
-    padding: 1 2;
+    padding: 0 2;
+    margin: 1 0 0 0;
+}
+
+AppCheckbox {
+    height: auto;
+    margin: 0 0 1 0;
+}
+
+AppCheckbox Vertical {
+    margin: 0 0 0 1;
+}
+
+.app-name {
+    color: $text;
+    text-style: bold;
 }
 
 .app-description {

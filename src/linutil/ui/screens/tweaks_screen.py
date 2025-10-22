@@ -21,12 +21,15 @@ class TweakCheckbox(Horizontal):
     def __init__(self, tweak: TweakDefinition):
         super().__init__()
         self.tweak = tweak
-        self.checkbox = Checkbox(self.tweak.name, id=f"tweak_{self.tweak.id}")
+        self.checkbox = Checkbox("", id=f"tweak_{self.tweak.id}")  # Empty label for checkbox
     
     def compose(self) -> ComposeResult:
         """Create child widgets."""
         yield self.checkbox
-        yield Label(f" - {self.tweak.description}", classes="tweak-description")
+        yield Vertical(
+            Label(self.tweak.name, classes="tweak-name"),
+            Label(self.tweak.description, classes="tweak-description"),
+        )
 
 
 class TweaksScreen(Screen):
@@ -55,14 +58,11 @@ class TweaksScreen(Screen):
         
         yield Container(
             Vertical(
-                Static(""),
                 Label("🔧 System Tweaks & Optimizations", classes="screen-title"),
-                Static(""),
                 Label(
                     "Select tweaks to apply to your system",
                     classes="subtitle"
                 ),
-                Static(""),
                 
                 # Action buttons
                 Horizontal(
@@ -71,7 +71,6 @@ class TweaksScreen(Screen):
                     Button("⚡ Apply Selected", id="btn-apply", variant="success"),
                     classes="button-row"
                 ),
-                Static(""),
                 
                 # Scrollable tweaks list
                 ScrollableContainer(
@@ -79,13 +78,11 @@ class TweaksScreen(Screen):
                     id="tweaks-container"
                 ),
                 
-                Static(""),
+                # Bottom buttons
                 Horizontal(
                     Button("◀ Back", id="btn-back", variant="default"),
                     classes="button-row"
                 ),
-                Static(""),
-                Label("", id="status-label", classes="status-label"),
                 
                 id="tweaks-screen-container"
             ),
@@ -113,14 +110,16 @@ class TweaksScreen(Screen):
             name = section.get('name', 'Unknown')
             tweaks = section.get('tweaks', [])
             
-            widgets.append(Static(""))
+            # Add spacing only before non-first sections
+            if widgets:
+                widgets.append(Static(""))
+            
             widgets.append(
                 Label(
                     f"{icon} {name} ({len(tweaks)} tweaks)",
                     classes="section-header"
                 )
             )
-            widgets.append(Static(""))
             
             # Tweaks in this section
             for tweak_data in tweaks:
@@ -267,24 +266,38 @@ TWEAKS_SCREEN_CSS = """
 #tweaks-screen-container {
     width: 90%;
     max-width: 120;
-    height: auto;
+    height: 100%;
     border: solid $accent;
-    padding: 2;
+    padding: 1 2;
 }
 
 #tweaks-container {
-    height: 100%;
-    max-height: 40;
+    height: 1fr;
     border: solid $primary;
     padding: 1;
-    margin: 1 0;
+    margin: 0;
 }
 
 .section-header {
     text-style: bold;
     color: $accent;
     background: $surface;
-    padding: 1 2;
+    padding: 0 2;
+    margin: 1 0 0 0;
+}
+
+TweakCheckbox {
+    height: auto;
+    margin: 0 0 1 0;
+}
+
+TweakCheckbox Vertical {
+    margin: 0 0 0 1;
+}
+
+.tweak-name {
+    color: $text;
+    text-style: bold;
 }
 
 .tweak-description {
