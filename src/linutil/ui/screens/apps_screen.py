@@ -16,7 +16,6 @@ from linutil.core.config_loader import AppConfig, AppDefinition
 from linutil.managers.base_manager import PackageManagerFactory, InstallResult
 from linutil.core.executor import PrivilegeHandler, CommandExecutor
 from linutil.core.terminal_executor import TerminalExecutor
-from linutil.ui.theme import get_icon
 
 
 class AppCheckbox(Horizontal):
@@ -77,17 +76,17 @@ class AppsScreen(Screen):
         
         yield Container(
             Vertical(
-                Label(f"{get_icon('apps')} Application Installer", classes="screen-title"),
+                Label("📦 Application Installer", classes="screen-title"),
                 Label(
-                    f"📦 Package Manager: {self.package_manager.upper()}",
+                    f"Package Manager: {self.package_manager.upper()}",
                     classes="pm-label"
                 ),
                 
                 # Action buttons
                 Horizontal(
-                    Button(f"{get_icon('select_all')} Select All", id="btn-select-all", variant="primary"),
-                    Button(f"{get_icon('select_none')} Select None", id="btn-select-none", variant="default"),
-                    Button(f"{get_icon('install')} Install Selected", id="btn-install", variant="success"),
+                    Button("✓ Select All", id="btn-select-all", variant="primary"),
+                    Button("✗ Select None", id="btn-select-none", variant="default"),
+                    Button("📥 Install Selected", id="btn-install", variant="success"),
                     classes="button-row"
                 ),
                 
@@ -99,7 +98,7 @@ class AppsScreen(Screen):
                 
                 # Bottom buttons
                 Horizontal(
-                    Button(f"{get_icon('back')} Back", id="btn-back", variant="default"),
+                    Button("◀ Back", id="btn-back", variant="default"),
                     classes="button-row"
                 ),
                 
@@ -265,3 +264,84 @@ class AppsScreen(Screen):
                 msg = "Installation cancelled or failed"
             self.app.notify(msg, severity="warning")
 
+
+# CSS for the apps screen
+APPS_SCREEN_CSS = """
+#apps-screen-container {
+    width: 90%;
+    max-width: 120;
+    height: 100%;
+    border: solid $accent;
+    padding: 1 2;
+}
+
+#apps-container {
+    height: 1fr;
+    border: solid $primary;
+    padding: 1;
+    margin: 0;
+}
+
+.category-header {
+    text-style: bold;
+    color: $accent;
+    background: $surface;
+    padding: 0 2;
+    margin: 1 0 0 0;
+}
+
+AppCheckbox {
+    height: auto;
+    margin: 0;
+    padding: 0 1;
+}
+
+AppCheckbox:hover {
+    background: $boost;
+}
+
+AppCheckbox Vertical {
+    margin: 0 0 0 1;
+    padding: 0;
+    height: auto;
+}
+
+AppCheckbox Checkbox {
+    padding: 0;
+    width: auto;
+}
+
+AppCheckbox Label {
+    width: 1fr;
+    height: auto;
+}
+
+.app-name {
+    color: $text;
+    text-style: bold;
+    height: 1;
+}
+
+.app-description {
+    color: $text-muted;
+    text-style: italic;
+    height: 1;
+}
+
+.pm-label {
+    text-align: center;
+    color: $success;
+}
+
+.status-label {
+    text-align: center;
+    color: $warning;
+    text-style: bold;
+}
+
+.no-apps-message {
+    text-align: center;
+    color: $warning;
+    padding: 5;
+}
+"""
