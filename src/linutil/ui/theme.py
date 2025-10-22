@@ -57,7 +57,7 @@ Container {
     width: 90;
     height: auto;
     background: $surface;
-    border: rounded $border-accent;
+    border: round $border-accent;
     padding: 3 4;
 }
 
@@ -176,13 +176,13 @@ Button.-error:hover {
     max-width: 120;
     height: 100%;
     background: $surface;
-    border: rounded $border-accent;
+    border: round $border-accent;
     padding: 2 3;
 }
 
 #update-info-container {
     height: 1fr;
-    border: rounded $border;
+    border: round $border;
     background: $surface-light;
     padding: 2;
     margin: 1 0;
@@ -204,7 +204,7 @@ Button.-error:hover {
 
 #apps-container {
     height: 1fr;
-    border: rounded $border;
+    border: round $border;
     background: $surface-light;
     padding: 1;
     margin: 1 0;
@@ -221,7 +221,7 @@ Button.-error:hover {
 
 #apps-container {
     height: 1fr;
-    border: rounded $border;
+    border: round $border;
     background: $surface-light;
     padding: 1;
     margin: 1 0;
@@ -283,7 +283,7 @@ Button.-error:hover {
     max-width: 120;
     height: 100%;
     background: $surface;
-    border: rounded $border-accent;
+    border: round $border-accent;
     padding: 2 3;
 }
 
@@ -339,13 +339,13 @@ AppCheckbox Vertical {
     max-width: 120;
     height: 100%;
     background: $surface;
-    border: rounded $border-accent;
+    border: round $border-accent;
     padding: 2 3;
 }
 
 #tweaks-list-container {
     height: 1fr;
-    border: rounded $border;
+    border: round $border;
     background: $surface-light;
     padding: 1;
     margin: 1 0;
@@ -461,7 +461,7 @@ Checkbox > .toggle--label {
     text-style: bold;
     padding: 2;
     background: $surface;
-    border: rounded $error;
+    border: round $error;
 }
 
 .info-label {
