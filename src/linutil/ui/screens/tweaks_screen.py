@@ -172,6 +172,10 @@ class TweaksScreen(Screen):
             checkbox.value = False
         self.app.notify("All selections cleared", severity="information")
     
+    def action_pop_screen(self) -> None:
+        """Go back to previous screen."""
+        self.app.pop_screen()
+    
     def action_quit(self) -> None:
         """Quit the application."""
         self.app.exit()
@@ -191,6 +195,14 @@ class TweaksScreen(Screen):
                 severity="warning"
             )
             return
+        
+        # Show selection count
+        tweak_names = [tweak.name for tweak in selected]
+        self.app.notify(
+            f"Selected {len(selected)} tweak(s): {', '.join(tweak_names[:3])}{'...' if len(tweak_names) > 3 else ''}",
+            severity="information",
+            timeout=3
+        )
         
         # Prepare commands
         all_commands = []
@@ -242,10 +254,12 @@ class TweaksScreen(Screen):
                 msg += " Please restart your system."
             self.app.notify(msg, severity="information")
         else:
-            self.app.notify(
-                "Tweak application failed or was cancelled.",
-                severity="error"
-            )
+            # User cancelled or command failed
+            if result.return_code == 130:
+                msg = "Tweak application cancelled (Ctrl+C)"
+            else:
+                msg = "Tweak application cancelled or failed"
+            self.app.notify(msg, severity="warning")
     
 
 # CSS for the tweaks screen
@@ -259,7 +273,8 @@ TWEAKS_SCREEN_CSS = """
 }
 
 #tweaks-container {
-    height: 30;
+    height: 100%;
+    max-height: 40;
     border: solid $primary;
     padding: 1;
     margin: 1 0;

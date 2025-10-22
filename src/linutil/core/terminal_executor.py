@@ -144,8 +144,8 @@ class TerminalExecutor:
         try:
             response = input("\nContinue? [y/N]: ").strip().lower()
             if response not in ['y', 'yes']:
-                print("Operation cancelled.")
-                return TerminalResult.from_code(0)
+                print("Operation cancelled by user.")
+                return TerminalResult.from_code(1)  # Return error code for cancellation
         except KeyboardInterrupt:
             print("\n\nOperation cancelled.")
             return TerminalResult.from_code(130)

@@ -150,6 +150,10 @@ class UpdateScreen(Screen):
         elif event.button.id == "btn-start-update":
             self.start_update()
     
+    def action_pop_screen(self) -> None:
+        """Go back to previous screen."""
+        self.app.pop_screen()
+    
     def action_quit(self) -> None:
         """Quit the application."""
         self.app.exit()
@@ -198,10 +202,12 @@ class UpdateScreen(Screen):
                 severity="information"
             )
         else:
-            self.app.notify(
-                "Update failed or was cancelled.",
-                severity="error"
-            )
+            # User cancelled or command failed
+            if result.return_code == 130:
+                msg = "Update cancelled (Ctrl+C)"
+            else:
+                msg = "Update cancelled or failed"
+            self.app.notify(msg, severity="warning")
 
 
 class LinUtilApp(App):

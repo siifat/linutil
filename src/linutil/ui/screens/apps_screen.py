@@ -171,6 +171,10 @@ class AppsScreen(Screen):
             checkbox.value = False
         self.app.notify("All selections cleared", severity="information")
     
+    def action_pop_screen(self) -> None:
+        """Go back to previous screen."""
+        self.app.pop_screen()
+    
     def action_quit(self) -> None:
         """Quit the application."""
         self.app.exit()
@@ -190,6 +194,14 @@ class AppsScreen(Screen):
                 severity="warning"
             )
             return
+        
+        # Show selection count
+        app_names = [app.name for app in selected]
+        self.app.notify(
+            f"Selected {len(selected)} application(s): {', '.join(app_names[:3])}{'...' if len(app_names) > 3 else ''}",
+            severity="information",
+            timeout=3
+        )
         
         # Prepare installation commands
         commands = []
@@ -238,10 +250,12 @@ class AppsScreen(Screen):
                 severity="information"
             )
         else:
-            self.app.notify(
-                "Installation failed or was cancelled.",
-                severity="error"
-            )
+            # User cancelled or command failed
+            if result.return_code == 130:
+                msg = "Installation cancelled (Ctrl+C)"
+            else:
+                msg = "Installation cancelled or failed"
+            self.app.notify(msg, severity="warning")
 
 
 # CSS for the apps screen
@@ -255,7 +269,8 @@ APPS_SCREEN_CSS = """
 }
 
 #apps-container {
-    height: 30;
+    height: 100%;
+    max-height: 40;
     border: solid $primary;
     padding: 1;
     margin: 1 0;
