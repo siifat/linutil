@@ -240,7 +240,6 @@ class LinUtilApp(App):
         text-align: center;
         text-style: bold;
         color: $accent;
-        font-size: 2;
     }
     
     #distro-info, #pm-info {
