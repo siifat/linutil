@@ -11,6 +11,7 @@ sections:
         name: "Enable RPM Fusion Repositories"
         description: "Enables both Free and Non-Free RPM Fusion repositories for additional software"
         category: "repositories"
+        task_list: "I MP"
         requires_restart: false
         idempotent: true
         commands:
@@ -26,6 +27,7 @@ sections:
         name: "Install Multimedia Codecs"
         description: "Installs ffmpeg and multimedia codecs from RPM Fusion for video playback"
         category: "multimedia"
+        task_list: "I MP"
         requires_restart: false
         idempotent: true
         dependencies: ["enable-rpmfusion"]
@@ -56,6 +58,7 @@ sections:
         name: "Optimize DNF Performance"
         description: "Configures DNF for faster downloads and better performance"
         category: "performance"
+        task_list: "FM MP"
         requires_restart: false
         idempotent: true
         commands:

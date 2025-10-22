@@ -28,7 +28,7 @@ class TweakCheckbox(Horizontal):
         """Create child widgets."""
         yield self.checkbox
         yield Vertical(
-            Label(self.tweak.name, classes="tweak-name"),
+            Label(f"{self.tweak.name} [{self.tweak.task_list}]", classes="tweak-name"),
             Label(self.tweak.description, classes="tweak-description"),
         )
     
@@ -142,6 +142,7 @@ class TweaksScreen(Screen):
                     dependencies=tweak_data.get("dependencies", []),
                     verification=tweak_data.get("verification"),
                     section=name,
+                    task_list=tweak_data.get("task_list", "I"),
                 )
                 
                 widgets.append(TweakCheckbox(tweak))

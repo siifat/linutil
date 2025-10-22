@@ -17,6 +17,17 @@ class ConfigLoadError(Exception):
     pass
 
 
+# Task list indicator constants (like CTT's system)
+TASK_INSTALL = "I"  # Installation
+TASK_FILE_MOD = "FM"  # File Modification
+TASK_DISK = "D"  # Disk operations
+TASK_SYSTEMD = "SS"  # SystemD service
+TASK_KERNEL = "K"  # Kernel modifications
+TASK_FLATPAK = "FI"  # Flatpak installation
+TASK_PACKAGE_MANAGER = "MP"  # Package manager operations
+TASK_PRIVILEGED = "P*"  # Requires elevated privileges
+
+
 @dataclass
 class AppDefinition:
     """Definition of an installable application."""
@@ -27,6 +38,7 @@ class AppDefinition:
     install: dict[str, Any]
     tags: list[str]
     category: str = ""
+    task_list: str = TASK_INSTALL  # Task indicator
     
     def supports_package_manager(self, pm: str) -> bool:
         """Check if this app supports a given package manager."""
@@ -47,6 +59,7 @@ class TweakDefinition:
     dependencies: list[str] = None
     verification: Optional[dict[str, str]] = None
     section: str = ""
+    task_list: str = TASK_INSTALL  # Task indicator
     
     def __post_init__(self):
         if self.dependencies is None:
@@ -72,6 +85,7 @@ class AppConfig:
                     install=app_data["install"],
                     tags=app_data.get("tags", []),
                     category=cat_name,
+                    task_list=app_data.get("task_list", TASK_INSTALL),
                 )
                 apps.append(app)
         return apps
@@ -106,6 +120,7 @@ class TweakConfig:
                     dependencies=tweak_data.get("dependencies", []),
                     verification=tweak_data.get("verification"),
                     section=section_name,
+                    task_list=tweak_data.get("task_list", TASK_INSTALL),
                 )
                 tweaks.append(tweak)
         return tweaks

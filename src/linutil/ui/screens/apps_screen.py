@@ -31,7 +31,7 @@ class AppCheckbox(Horizontal):
         """Create child widgets."""
         yield self.checkbox
         yield Vertical(
-            Label(self.app_def.name, classes="app-name"),
+            Label(f"{self.app_def.name} [{self.app_def.task_list}]", classes="app-name"),
             Label(self.app_def.description, classes="app-description"),
         )
     
