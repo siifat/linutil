@@ -30,6 +30,10 @@ class TweakCheckbox(Horizontal):
             Label(self.tweak.name, classes="tweak-name"),
             Label(self.tweak.description, classes="tweak-description"),
         )
+    
+    def on_click(self) -> None:
+        """Toggle checkbox when clicking anywhere on the row."""
+        self.checkbox.toggle()
 
 
 class TweaksScreen(Screen):
@@ -285,7 +289,7 @@ TWEAKS_SCREEN_CSS = """
 TweakCheckbox {
     height: auto;
     margin: 0;
-    padding: 0 0 0 0;
+    padding: 0 1;
 }
 
 TweakCheckbox Vertical {
@@ -295,6 +299,11 @@ TweakCheckbox Vertical {
 
 TweakCheckbox Checkbox {
     padding: 0;
+    width: auto;
+}
+
+TweakCheckbox Label {
+    width: 1fr;
 }
 
 .tweak-name {
@@ -328,18 +337,5 @@ TweakCheckbox Checkbox {
     text-align: center;
     color: $warning;
     padding: 5;
-}
-
-TweakCheckbox {
-    height: auto;
-    padding: 0 2;
-}
-
-TweakCheckbox Checkbox {
-    width: auto;
-}
-
-TweakCheckbox Label {
-    width: 1fr;
 }
 """

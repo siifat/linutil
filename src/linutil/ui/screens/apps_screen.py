@@ -33,6 +33,10 @@ class AppCheckbox(Horizontal):
             Label(self.app_def.name, classes="app-name"),
             Label(self.app_def.description, classes="app-description"),
         )
+    
+    def on_click(self) -> None:
+        """Toggle checkbox when clicking anywhere on the row."""
+        self.checkbox.toggle()
 
 
 class AppsScreen(Screen):
@@ -281,7 +285,7 @@ APPS_SCREEN_CSS = """
 AppCheckbox {
     height: auto;
     margin: 0;
-    padding: 0 0 0 0;
+    padding: 0 1;
 }
 
 AppCheckbox Vertical {
@@ -291,6 +295,11 @@ AppCheckbox Vertical {
 
 AppCheckbox Checkbox {
     padding: 0;
+    width: auto;
+}
+
+AppCheckbox Label {
+    width: 1fr;
 }
 
 .app-name {
@@ -318,18 +327,5 @@ AppCheckbox Checkbox {
     text-align: center;
     color: $warning;
     padding: 5;
-}
-
-AppCheckbox {
-    height: auto;
-    padding: 0 2;
-}
-
-AppCheckbox Checkbox {
-    width: auto;
-}
-
-AppCheckbox Label {
-    width: 1fr;
 }
 """
