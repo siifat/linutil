@@ -61,7 +61,8 @@ class TerminalExecutor:
             TerminalResult with return code and success status
         """
         # Create a shell script to execute
-        script_lines = ["#!/bin/bash", "set -e"]  # Exit on error
+        script_lines = ["#!/bin/bash"]
+        # Don't use 'set -e' - we want to continue even if some commands fail
         
         if description:
             script_lines.append(f'echo "==================================="')
@@ -69,20 +70,32 @@ class TerminalExecutor:
             script_lines.append(f'echo "==================================="')
             script_lines.append('echo ""')
         
+        # Track overall success
+        script_lines.append('OVERALL_SUCCESS=0')
+        
         # Add commands
         for cmd in commands:
             if use_sudo and not cmd.strip().startswith('sudo'):
                 script_lines.append(f'sudo {cmd}')
             else:
                 script_lines.append(cmd)
+            # Capture the exit code but don't exit
+            script_lines.append('CMD_EXIT=$?')
+            script_lines.append('if [ $CMD_EXIT -ne 0 ]; then OVERALL_SUCCESS=$CMD_EXIT; fi')
         
-        # Add completion message
+        # Always show completion message
         script_lines.append('echo ""')
         script_lines.append('echo "==================================="')
-        script_lines.append('echo "Operation completed!"')
+        script_lines.append('if [ $OVERALL_SUCCESS -eq 0 ]; then')
+        script_lines.append('    echo "Operation completed successfully!"')
+        script_lines.append('else')
+        script_lines.append('    echo "Operation completed with warnings/errors"')
+        script_lines.append('    echo "Exit code: $OVERALL_SUCCESS"')
+        script_lines.append('fi')
         script_lines.append('echo "==================================="')
         script_lines.append('echo ""')
         script_lines.append('read -p "Press Enter to continue..."')
+        script_lines.append('exit $OVERALL_SUCCESS')
         
         script_content = '\n'.join(script_lines)
         

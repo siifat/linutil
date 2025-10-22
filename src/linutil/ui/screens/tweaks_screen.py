@@ -9,6 +9,7 @@ from textual.containers import Container, Vertical, Horizontal, ScrollableContai
 from textual.widgets import Header, Footer, Button, Static, Label, Checkbox
 from textual.binding import Binding
 from textual.screen import Screen
+from textual import events
 
 from linutil.core.config_loader import TweakConfig, TweakDefinition
 from linutil.core.executor import PrivilegeHandler, CommandExecutor
@@ -31,9 +32,16 @@ class TweakCheckbox(Horizontal):
             Label(self.tweak.description, classes="tweak-description"),
         )
     
-    def on_click(self) -> None:
-        """Toggle checkbox when clicking anywhere on the row."""
+    def on_click(self, event: events.Click) -> None:
+        """Toggle checkbox when clicking anywhere on the row except the checkbox itself."""
+        # Check if the click was on the checkbox widget itself
+        if event.widget is self.checkbox:
+            # Let the checkbox handle it naturally
+            return
+        
+        # Otherwise, toggle the checkbox
         self.checkbox.toggle()
+        event.stop()  # Prevent event bubbling
 
 
 class TweaksScreen(Screen):

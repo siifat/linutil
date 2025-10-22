@@ -19,6 +19,12 @@ from linutil.managers.apt_manager import AptManager
 from linutil.managers.dnf_manager import DnfManager
 from linutil.ui.screens.apps_screen import AppsScreen, APPS_SCREEN_CSS
 from linutil.ui.screens.tweaks_screen import TweaksScreen, TWEAKS_SCREEN_CSS
+from linutil.ui.tips import get_random_tip
+from linutil.ui.shortcuts import ShortcutGuide
+
+# Minimum terminal size for proper display
+MIN_WIDTH = 80
+MIN_HEIGHT = 24
 
 
 class WelcomeScreen(Screen):
@@ -34,6 +40,7 @@ class WelcomeScreen(Screen):
     def __init__(self, distro_info: DistroInfo):
         super().__init__()
         self.distro_info = distro_info
+        self.tip = get_random_tip()
     
     def compose(self) -> ComposeResult:
         """Create child widgets."""
@@ -68,7 +75,12 @@ class WelcomeScreen(Screen):
                     classes="button-row"
                 ),
                 Static(""),
-                Static("Use arrow keys and Enter to navigate, or press shortcuts", classes="hint"),
+                Label(f"💡 Tip: {self.tip}", classes="tip-text"),
+                Static(""),
+                Label(
+                    ShortcutGuide.format_shortcuts(ShortcutGuide.welcome_screen(), max_width=60),
+                    classes="shortcuts-guide"
+                ),
                 id="welcome-container"
             ),
             id="main-container"
@@ -306,6 +318,20 @@ class LinUtilApp(App):
         text-style: italic;
     }
     
+    .tip-text {
+        text-align: center;
+        color: $primary;
+        text-style: italic bold;
+        margin: 0 2;
+    }
+    
+    .shortcuts-guide {
+        text-align: center;
+        color: $text-muted;
+        text-style: italic;
+        margin: 0 2;
+    }
+    
     .info-label {
         color: $text-muted;
         margin: 0 2;
@@ -316,6 +342,13 @@ class LinUtilApp(App):
         color: $warning;
         text-style: bold;
         min-height: 3;
+    }
+    
+    .size-warning {
+        text-align: center;
+        color: $error;
+        text-style: bold;
+        padding: 2;
     }
     """ + APPS_SCREEN_CSS + TWEAKS_SCREEN_CSS
     
@@ -339,9 +372,45 @@ class LinUtilApp(App):
         self.distro_info = distro_info
         self.config = config
         self.privilege_handler = privilege_handler
+        self._terminal_size_ok = True
+    
+    def check_terminal_size(self) -> bool:
+        """
+        Check if terminal size meets minimum requirements.
+        
+        Returns:
+            True if terminal size is adequate, False otherwise
+        """
+        size = self.size
+        return size.width >= MIN_WIDTH and size.height >= MIN_HEIGHT
+    
+    def compose(self) -> ComposeResult:
+        """Compose the app's widgets."""
+        # Check terminal size
+        if not self.check_terminal_size():
+            self._terminal_size_ok = False
+            size = self.size
+            yield Container(
+                Vertical(
+                    Label("⚠️ Terminal Size Too Small", classes="size-warning"),
+                    Label(f"Current: {size.width}x{size.height}", classes="size-warning"),
+                    Label(f"Minimum Required: {MIN_WIDTH}x{MIN_HEIGHT}", classes="size-warning"),
+                    Label("", classes="size-warning"),
+                    Label("Please resize your terminal and restart the application.", classes="size-warning"),
+                ),
+                id="main-container"
+            )
+            return
+        
+        self._terminal_size_ok = True
+        yield from super().compose()
     
     def on_mount(self) -> None:
         """Called when app is mounted."""
+        # Skip if terminal size is too small
+        if not self._terminal_size_ok:
+            return
+        
         # Install screens
         self.install_screen(WelcomeScreen(self.distro_info), name="welcome")
         self.install_screen(

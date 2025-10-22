@@ -10,6 +10,7 @@ from textual.widgets import Header, Footer, Button, Static, Label, Checkbox
 from textual.binding import Binding
 from textual.screen import Screen
 from textual.message import Message
+from textual import events
 
 from linutil.core.config_loader import AppConfig, AppDefinition
 from linutil.managers.base_manager import PackageManagerFactory, InstallResult
@@ -34,9 +35,16 @@ class AppCheckbox(Horizontal):
             Label(self.app_def.description, classes="app-description"),
         )
     
-    def on_click(self) -> None:
-        """Toggle checkbox when clicking anywhere on the row."""
+    def on_click(self, event: events.Click) -> None:
+        """Toggle checkbox when clicking anywhere on the row except the checkbox itself."""
+        # Check if the click was on the checkbox widget itself
+        if event.widget is self.checkbox:
+            # Let the checkbox handle it naturally
+            return
+        
+        # Otherwise, toggle the checkbox
         self.checkbox.toggle()
+        event.stop()  # Prevent event bubbling
 
 
 class AppsScreen(Screen):
