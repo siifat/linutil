@@ -99,6 +99,10 @@ class WelcomeScreen(Screen):
     def action_tweaks(self) -> None:
         """Handle tweaks action."""
         self.app.push_screen("tweaks")
+    
+    def action_quit(self) -> None:
+        """Quit the application."""
+        self.app.exit()
 
 
 class UpdateScreen(Screen):
@@ -145,6 +149,10 @@ class UpdateScreen(Screen):
             self.app.pop_screen()
         elif event.button.id == "btn-start-update":
             self.start_update()
+    
+    def action_quit(self) -> None:
+        """Quit the application."""
+        self.app.exit()
     
     def start_update(self) -> None:
         """Start system update interactively."""

@@ -172,6 +172,10 @@ class TweaksScreen(Screen):
             checkbox.value = False
         self.app.notify("All selections cleared", severity="information")
     
+    def action_quit(self) -> None:
+        """Quit the application."""
+        self.app.exit()
+    
     def action_apply(self) -> None:
         """Apply selected tweaks interactively."""
         # Collect selected tweaks

@@ -22,14 +22,14 @@ class AppCheckbox(Horizontal):
     
     def __init__(self, app: AppDefinition, package_manager: str):
         super().__init__()
-        self.app = app
+        self.app_def = app  # Renamed from 'app' to avoid conflict with Textual's .app property
         self.package_manager = package_manager
-        self.checkbox = Checkbox(self.app.name, id=f"app_{self.app.id}")
+        self.checkbox = Checkbox(self.app_def.name, id=f"app_{self.app_def.id}")
     
     def compose(self) -> ComposeResult:
         """Create child widgets."""
         yield self.checkbox
-        yield Label(f" - {self.app.description}", classes="app-description")
+        yield Label(f" - {self.app_def.description}", classes="app-description")
 
 
 class AppsScreen(Screen):
@@ -171,6 +171,10 @@ class AppsScreen(Screen):
             checkbox.value = False
         self.app.notify("All selections cleared", severity="information")
     
+    def action_quit(self) -> None:
+        """Quit the application."""
+        self.app.exit()
+    
     def action_install(self) -> None:
         """Install selected applications interactively."""
         # Collect selected apps
@@ -178,7 +182,7 @@ class AppsScreen(Screen):
         
         for app_checkbox in self.query(AppCheckbox):
             if app_checkbox.checkbox.value:
-                selected.append(app_checkbox.app)
+                selected.append(app_checkbox.app_def)
         
         if not selected:
             self.app.notify(
