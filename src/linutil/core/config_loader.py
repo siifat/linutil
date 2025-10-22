@@ -123,7 +123,8 @@ class ConfigLoader:
         """
         if config_dir is None:
             # Default to package's data directory
-            package_root = Path(__file__).parent.parent.parent
+            # From src/linutil/core/config_loader.py -> go up to project root
+            package_root = Path(__file__).parent.parent.parent.parent
             self.config_dir = package_root / "data"
         else:
             self.config_dir = Path(config_dir)
