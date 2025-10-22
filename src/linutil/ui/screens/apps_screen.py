@@ -284,11 +284,17 @@ APPS_SCREEN_CSS = """
 
 AppCheckbox {
     height: auto;
-    margin: 0 0 1 0;
+    margin: 0;
+    padding: 0 0 0 0;
 }
 
 AppCheckbox Vertical {
     margin: 0 0 0 1;
+    padding: 0;
+}
+
+AppCheckbox Checkbox {
+    padding: 0;
 }
 
 .app-name {

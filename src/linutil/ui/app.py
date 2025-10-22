@@ -121,26 +121,42 @@ class UpdateScreen(Screen):
     def compose(self) -> ComposeResult:
         """Create child widgets."""
         yield Header()
-        yield ScrollableContainer(
+        
+        yield Container(
             Vertical(
-                Static(""),
                 Label("🔄 System Update", classes="screen-title"),
-                Static(""),
-                Label("This will update all installed packages on your system."),
                 Label(f"Package Manager: {self.package_manager.upper()}", classes="pm-label"),
-                Static(""),
-                Label("The update will run in an interactive terminal where you can:", classes="info-label"),
-                Label("  • See real-time output", classes="info-label"),
-                Label("  • Enter your password when prompted", classes="info-label"),
-                Label("  • Confirm package installations", classes="info-label"),
-                Static(""),
-                Button("🔄 Start Update", id="btn-start-update", variant="success"),
-                Button("◀ Back", id="btn-back", variant="default"),
-                Static(""),
+                
+                # Info section
+                ScrollableContainer(
+                    Vertical(
+                        Label("This will update all installed packages on your system.", classes="update-info"),
+                        Static(""),
+                        Label("The update will run in an interactive terminal where you can:", classes="update-info"),
+                        Label("  • See real-time output", classes="info-item"),
+                        Label("  • Enter your password when prompted", classes="info-item"),
+                        Label("  • Confirm package installations", classes="info-item"),
+                    ),
+                    id="update-info-container"
+                ),
+                
+                # Action buttons
+                Horizontal(
+                    Button("🔄 Start Update", id="btn-start-update", variant="success"),
+                    classes="button-row"
+                ),
+                
+                # Bottom buttons
+                Horizontal(
+                    Button("◀ Back", id="btn-back", variant="default"),
+                    classes="button-row"
+                ),
+                
                 id="update-container"
             ),
             id="main-container"
         )
+        
         yield Footer()
     
     def on_button_pressed(self, event: Button.Pressed) -> None:
@@ -228,10 +244,28 @@ class LinUtilApp(App):
     }
     
     #update-container {
-        width: 80;
-        height: auto;
+        width: 90%;
+        max-width: 120;
+        height: 100%;
         border: solid $accent;
-        padding: 2;
+        padding: 1 2;
+    }
+    
+    #update-info-container {
+        height: 1fr;
+        border: solid $primary;
+        padding: 1;
+        margin: 0;
+    }
+    
+    .update-info {
+        color: $text;
+        margin: 0 0 0 0;
+    }
+    
+    .info-item {
+        color: $text-muted;
+        margin: 0 0 0 2;
     }
     
     .banner {
@@ -253,7 +287,6 @@ class LinUtilApp(App):
     .pm-label {
         text-align: center;
         color: $success;
-        margin: 1;
     }
     
     .button-row {

@@ -288,11 +288,17 @@ TWEAKS_SCREEN_CSS = """
 
 TweakCheckbox {
     height: auto;
-    margin: 0 0 1 0;
+    margin: 0;
+    padding: 0 0 0 0;
 }
 
 TweakCheckbox Vertical {
     margin: 0 0 0 1;
+    padding: 0;
+}
+
+TweakCheckbox Checkbox {
+    padding: 0;
 }
 
 .tweak-name {
