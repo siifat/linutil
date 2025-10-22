@@ -288,9 +288,14 @@ AppCheckbox {
     padding: 0 1;
 }
 
+AppCheckbox:hover {
+    background: $boost;
+}
+
 AppCheckbox Vertical {
     margin: 0 0 0 1;
     padding: 0;
+    height: auto;
 }
 
 AppCheckbox Checkbox {
@@ -300,16 +305,19 @@ AppCheckbox Checkbox {
 
 AppCheckbox Label {
     width: 1fr;
+    height: auto;
 }
 
 .app-name {
     color: $text;
     text-style: bold;
+    height: 1;
 }
 
 .app-description {
     color: $text-muted;
     text-style: italic;
+    height: 1;
 }
 
 .pm-label {

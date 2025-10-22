@@ -292,9 +292,14 @@ TweakCheckbox {
     padding: 0 1;
 }
 
+TweakCheckbox:hover {
+    background: $boost;
+}
+
 TweakCheckbox Vertical {
     margin: 0 0 0 1;
     padding: 0;
+    height: auto;
 }
 
 TweakCheckbox Checkbox {
@@ -304,22 +309,27 @@ TweakCheckbox Checkbox {
 
 TweakCheckbox Label {
     width: 1fr;
+    height: auto;
 }
 
 .tweak-name {
     color: $text;
     text-style: bold;
+    height: 1;
 }
 
 .tweak-description {
     color: $text-muted;
     text-style: italic;
+    height: 1;
 }
 
 .restart-warning {
     color: $warning;
     text-style: italic;
-    padding: 0 4;
+    padding: 0 0 0 4;
+    margin: 0;
+    height: 1;
 }
 
 .subtitle {
