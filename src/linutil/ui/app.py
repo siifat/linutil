@@ -12,9 +12,12 @@ from textual.screen import Screen
 
 from linutil.core.distro_detector import detect_distribution, DistroInfo, DistroDetectionError
 from linutil.core.config_loader import ConfigLoader, ConfigLoadError
-from linutil.core.executor import PrivilegeHandler
+from linutil.core.executor import PrivilegeHandler, CommandExecutor
 from linutil.managers.base_manager import PackageManagerFactory
 from linutil.managers.apt_manager import AptManager
+from linutil.managers.dnf_manager import DnfManager
+from linutil.ui.screens.apps_screen import AppsScreen, APPS_SCREEN_CSS
+from linutil.ui.screens.tweaks_screen import TweaksScreen, TWEAKS_SCREEN_CSS
 
 
 class WelcomeScreen(Screen):
@@ -90,11 +93,11 @@ class WelcomeScreen(Screen):
     
     def action_apps(self) -> None:
         """Handle apps action."""
-        self.app.notify("Application installer coming soon!", severity="information")
+        self.app.push_screen("apps")
     
     def action_tweaks(self) -> None:
         """Handle tweaks action."""
-        self.app.notify("System tweaks coming soon!", severity="information")
+        self.app.push_screen("tweaks")
 
 
 class UpdateScreen(Screen):
@@ -105,20 +108,27 @@ class UpdateScreen(Screen):
         Binding("q", "quit", "Quit"),
     ]
     
+    def __init__(self, package_manager: str, privilege_handler: PrivilegeHandler):
+        super().__init__()
+        self.package_manager = package_manager
+        self.privilege_handler = privilege_handler
+        self.is_updating = False
+    
     def compose(self) -> ComposeResult:
         """Create child widgets."""
         yield Header()
         yield Container(
             Vertical(
                 Static(""),
-                Label("System Update", classes="screen-title"),
+                Label("🔄 System Update", classes="screen-title"),
                 Static(""),
                 Label("This will update all installed packages on your system."),
+                Label(f"Package Manager: {self.package_manager.upper()}", classes="pm-label"),
                 Static(""),
                 Button("🔄 Start Update", id="btn-start-update", variant="success"),
                 Button("◀ Back", id="btn-back", variant="default"),
                 Static(""),
-                Label("", id="update-status"),
+                Label("", id="update-status", classes="status-label"),
                 Static(""),
                 id="update-container"
             ),
@@ -129,15 +139,72 @@ class UpdateScreen(Screen):
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Handle button presses."""
         if event.button.id == "btn-back":
-            self.app.pop_screen()
+            if not self.is_updating:
+                self.app.pop_screen()
+            else:
+                self.app.notify("Update in progress, please wait...", severity="warning")
         elif event.button.id == "btn-start-update":
-            self.start_update()
+            if not self.is_updating:
+                self.start_update()
     
     def start_update(self) -> None:
         """Start system update."""
+        self.is_updating = True
         status_label = self.query_one("#update-status", Label)
-        status_label.update("Update functionality will be implemented soon...")
+        status_label.update("Starting system update...")
+        
+        # Disable button
+        btn = self.query_one("#btn-start-update", Button)
+        btn.disabled = True
+        
         self.app.notify("System update started!", severity="information")
+        
+        # Run update in background
+        self.run_worker(self._perform_update(), name="system_update")
+    
+    async def _perform_update(self) -> None:
+        """Perform the system update."""
+        status_label = self.query_one("#update-status", Label)
+        
+        try:
+            # Create package manager
+            executor = CommandExecutor(self.privilege_handler)
+            pm_factory = PackageManagerFactory
+            
+            manager = pm_factory.create(self.package_manager, executor=executor)
+            
+            if not manager:
+                status_label.update(f"Error: Package manager {self.package_manager} not available")
+                return
+            
+            def progress_callback(msg: str):
+                status_label.update(msg)
+            
+            # Run upgrade
+            success = await manager.upgrade_system(on_progress=progress_callback)
+            
+            if success:
+                status_label.update("✓ System update completed successfully!")
+                self.app.notify(
+                    "System updated successfully!",
+                    severity="information"
+                )
+            else:
+                status_label.update("❌ System update failed!")
+                self.app.notify(
+                    "System update failed. Check the status for details.",
+                    severity="error"
+                )
+        
+        except Exception as e:
+            status_label.update(f"❌ Error: {str(e)}")
+            self.app.notify(f"Update failed: {str(e)}", severity="error")
+        
+        finally:
+            self.is_updating = False
+            # Re-enable button
+            btn = self.query_one("#btn-start-update", Button)
+            btn.disabled = False
 
 
 class LinUtilApp(App):
@@ -173,11 +240,18 @@ class LinUtilApp(App):
         text-align: center;
         text-style: bold;
         color: $accent;
+        font-size: 2;
     }
     
     #distro-info, #pm-info {
         text-align: center;
         margin-bottom: 1;
+    }
+    
+    .pm-label {
+        text-align: center;
+        color: $success;
+        margin: 1;
     }
     
     .button-row {
@@ -197,12 +271,13 @@ class LinUtilApp(App):
         text-style: italic;
     }
     
-    #update-status {
+    .status-label {
         text-align: center;
-        color: $success;
+        color: $warning;
         text-style: bold;
+        min-height: 3;
     }
-    """
+    """ + APPS_SCREEN_CSS + TWEAKS_SCREEN_CSS
     
     TITLE = "LinUtil - Linux Post-Install Setup"
     
@@ -229,7 +304,22 @@ class LinUtilApp(App):
         """Called when app is mounted."""
         # Install screens
         self.install_screen(WelcomeScreen(self.distro_info), name="welcome")
-        self.install_screen(UpdateScreen(), name="update")
+        self.install_screen(
+            UpdateScreen(self.distro_info.package_manager, self.privilege_handler),
+            name="update"
+        )
+        self.install_screen(
+            AppsScreen(
+                self.config["apps"],
+                self.distro_info.package_manager,
+                self.privilege_handler
+            ),
+            name="apps"
+        )
+        self.install_screen(
+            TweaksScreen(self.config["tweaks"], self.privilege_handler),
+            name="tweaks"
+        )
         
         # Show welcome screen
         self.push_screen("welcome")
