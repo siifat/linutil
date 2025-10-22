@@ -1,0 +1,19 @@
+# Common tweaks applicable to all distributions
+version: "1.0"
+
+sections:
+  - name: "Essential Utilities"
+    icon: "🛠️"
+    tweaks:
+      - id: "install-common-fonts"
+        name: "Install Common Fonts"
+        description: "Installs Liberation and DejaVu font families for better text rendering"
+        category: "fonts"
+        requires_restart: false
+        idempotent: true
+        commands:
+          - command: "echo 'Font installation depends on package manager'"
+            description: "This is a placeholder - implement per-distro"
+        verification:
+          check_command: "fc-list | grep -i liberation"
+          success_pattern: "Liberation"

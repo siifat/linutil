@@ -1,0 +1,108 @@
+# Ubuntu-specific post-install tweaks
+version: "1.0"
+distro: "ubuntu"
+compatible_versions: ["22.04", "23.10", "24.04"]
+
+sections:
+  - name: "Essential Post-Install"
+    icon: "📦"
+    tweaks:
+      - id: "ubuntu-restricted-extras"
+        name: "Install Ubuntu Restricted Extras"
+        description: "Installs media codecs, fonts (including Microsoft fonts), and Flash plugin support"
+        category: "multimedia"
+        requires_restart: false
+        idempotent: true
+        commands:
+          - command: "apt update"
+            description: "Updating package lists"
+          - command: "echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections"
+            description: "Pre-accepting Microsoft fonts EULA"
+          - command: "DEBIAN_FRONTEND=noninteractive apt install -y ubuntu-restricted-extras"
+            description: "Installing restricted extras"
+        verification:
+          check_command: "dpkg -l | grep ubuntu-restricted-extras"
+          success_pattern: "^ii\\s+ubuntu-restricted-extras"
+      
+      - id: "enable-partner-repo"
+        name: "Enable Canonical Partner Repository"
+        description: "Adds the partner repository for additional software like Skype"
+        category: "repositories"
+        requires_restart: false
+        idempotent: true
+        commands:
+          - command: "add-apt-repository -y 'deb http://archive.canonical.com/ubuntu $(lsb_release -sc) partner'"
+            description: "Adding partner repository"
+          - command: "apt update"
+            description: "Updating package lists"
+        verification:
+          check_command: "grep -r 'partner' /etc/apt/sources.list /etc/apt/sources.list.d/ 2>/dev/null"
+          success_pattern: "partner"
+      
+      - id: "install-build-essential"
+        name: "Install Build Essential"
+        description: "Installs compilers and development tools needed to build software"
+        category: "development"
+        requires_restart: false
+        idempotent: true
+        commands:
+          - command: "apt update"
+            description: "Updating package lists"
+          - command: "apt install -y build-essential"
+            description: "Installing build-essential"
+        verification:
+          check_command: "dpkg -l | grep build-essential"
+          success_pattern: "^ii\\s+build-essential"
+
+  - name: "System Optimization"
+    icon: "⚡"
+    tweaks:
+      - id: "optimize-swappiness"
+        name: "Optimize Swappiness for Desktop"
+        description: "Sets vm.swappiness to 10 for better desktop performance (default is 60)"
+        category: "performance"
+        requires_restart: false
+        idempotent: true
+        commands:
+          - command: "sysctl vm.swappiness=10"
+            description: "Setting swappiness for current session"
+          - command: "grep -q '^vm.swappiness' /etc/sysctl.conf && sed -i 's/^vm.swappiness.*/vm.swappiness=10/' /etc/sysctl.conf || echo 'vm.swappiness=10' >> /etc/sysctl.conf"
+            description: "Making swappiness persistent across reboots"
+        verification:
+          check_command: "sysctl vm.swappiness"
+          success_pattern: "vm.swappiness = 10"
+      
+      - id: "reduce-journal-size"
+        name: "Limit SystemD Journal Size"
+        description: "Limits systemd journal to 500MB to save disk space"
+        category: "performance"
+        requires_restart: false
+        idempotent: true
+        commands:
+          - command: "journalctl --vacuum-size=500M"
+            description: "Cleaning old journal entries"
+          - command: "mkdir -p /etc/systemd/journald.conf.d"
+            description: "Creating journald config directory"
+          - command: "echo -e '[Journal]\\nSystemMaxUse=500M' > /etc/systemd/journald.conf.d/00-journal-size.conf"
+            description: "Setting permanent journal size limit"
+        verification:
+          check_command: "test -f /etc/systemd/journald.conf.d/00-journal-size.conf"
+          success_pattern: ""
+
+  - name: "User Experience"
+    icon: "✨"
+    tweaks:
+      - id: "install-gnome-tweaks"
+        name: "Install GNOME Tweaks"
+        description: "Installs GNOME Tweaks tool for advanced desktop customization"
+        category: "desktop"
+        requires_restart: false
+        idempotent: true
+        commands:
+          - command: "apt update"
+            description: "Updating package lists"
+          - command: "apt install -y gnome-tweaks"
+            description: "Installing GNOME Tweaks"
+        verification:
+          check_command: "dpkg -l | grep gnome-tweaks"
+          success_pattern: "^ii\\s+gnome-tweaks"

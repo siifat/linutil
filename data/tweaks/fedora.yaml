@@ -1,0 +1,124 @@
+# Fedora-specific post-install tweaks
+version: "1.0"
+distro: "fedora"
+compatible_versions: ["39", "40", "41"]
+
+sections:
+  - name: "Essential Post-Install"
+    icon: "📦"
+    tweaks:
+      - id: "enable-rpmfusion"
+        name: "Enable RPM Fusion Repositories"
+        description: "Enables both Free and Non-Free RPM Fusion repositories for additional software"
+        category: "repositories"
+        requires_restart: false
+        idempotent: true
+        commands:
+          - command: "dnf install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm"
+            description: "Installing RPM Fusion Free repository"
+          - command: "dnf install -y https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
+            description: "Installing RPM Fusion Non-Free repository"
+        verification:
+          check_command: "dnf repolist | grep rpmfusion"
+          success_pattern: "rpmfusion"
+      
+      - id: "multimedia-codecs"
+        name: "Install Multimedia Codecs"
+        description: "Installs ffmpeg and multimedia codecs from RPM Fusion for video playback"
+        category: "multimedia"
+        requires_restart: false
+        idempotent: true
+        dependencies: ["enable-rpmfusion"]
+        commands:
+          - command: "dnf groupupdate -y multimedia --setopt='install_weak_deps=False' --exclude=PackageKit-gstreamer-plugin"
+            description: "Installing multimedia group packages"
+          - command: "dnf install -y ffmpeg --allowerasing"
+            description: "Installing ffmpeg"
+        verification:
+          check_command: "which ffmpeg"
+          success_pattern: "/usr/bin/ffmpeg"
+      
+      - id: "h264-decoder"
+        name: "Install H.264 Decoder"
+        description: "Installs hardware-accelerated H.264 decoder for better video performance"
+        category: "multimedia"
+        requires_restart: false
+        idempotent: true
+        dependencies: ["enable-rpmfusion"]
+        commands:
+          - command: "dnf install -y gstreamer1-plugin-openh264 mozilla-openh264"
+            description: "Installing H.264 decoder"
+        verification:
+          check_command: "rpm -qa | grep openh264"
+          success_pattern: "openh264"
+      
+      - id: "faster-dnf"
+        name: "Optimize DNF Performance"
+        description: "Configures DNF for faster downloads and better performance"
+        category: "performance"
+        requires_restart: false
+        idempotent: true
+        commands:
+          - command: "echo 'max_parallel_downloads=10' >> /etc/dnf/dnf.conf"
+            description: "Enabling parallel downloads"
+          - command: "echo 'fastestmirror=True' >> /etc/dnf/dnf.conf"
+            description: "Enabling fastest mirror selection"
+          - command: "echo 'deltarpm=True' >> /etc/dnf/dnf.conf"
+            description: "Enabling delta RPM for smaller updates"
+        verification:
+          check_command: "grep 'max_parallel_downloads' /etc/dnf/dnf.conf"
+          success_pattern: "max_parallel_downloads"
+
+  - name: "Development Tools"
+    icon: "⚙️"
+    tweaks:
+      - id: "development-tools"
+        name: "Install Development Tools"
+        description: "Installs GCC, make, and other essential build tools"
+        category: "development"
+        requires_restart: false
+        idempotent: true
+        commands:
+          - command: "dnf groupinstall -y 'Development Tools'"
+            description: "Installing Development Tools group"
+          - command: "dnf install -y kernel-devel kernel-headers"
+            description: "Installing kernel headers"
+        verification:
+          check_command: "which gcc"
+          success_pattern: "/usr/bin/gcc"
+
+  - name: "System Optimization"
+    icon: "⚡"
+    tweaks:
+      - id: "optimize-swappiness"
+        name: "Optimize Swappiness for Desktop"
+        description: "Sets vm.swappiness to 10 for better desktop performance"
+        category: "performance"
+        requires_restart: false
+        idempotent: true
+        commands:
+          - command: "sysctl vm.swappiness=10"
+            description: "Setting swappiness for current session"
+          - command: "grep -q '^vm.swappiness' /etc/sysctl.conf && sed -i 's/^vm.swappiness.*/vm.swappiness=10/' /etc/sysctl.conf || echo 'vm.swappiness=10' >> /etc/sysctl.conf"
+            description: "Making swappiness persistent across reboots"
+        verification:
+          check_command: "sysctl vm.swappiness"
+          success_pattern: "vm.swappiness = 10"
+
+  - name: "Firmware Updates"
+    icon: "🔄"
+    tweaks:
+      - id: "enable-fwupd"
+        name: "Enable Firmware Updates"
+        description: "Ensures fwupd is installed for automatic firmware updates"
+        category: "system"
+        requires_restart: false
+        idempotent: true
+        commands:
+          - command: "dnf install -y fwupd"
+            description: "Installing fwupd"
+          - command: "fwupdmgr refresh"
+            description: "Refreshing firmware metadata"
+        verification:
+          check_command: "which fwupd"
+          success_pattern: "/usr/bin/fwupd"

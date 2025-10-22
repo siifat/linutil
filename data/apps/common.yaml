@@ -1,0 +1,171 @@
+# Common applications available across all distributions
+version: "1.0"
+
+categories:
+  - name: "Web Browsers"
+    icon: "🌐"
+    applications:
+      - id: "firefox"
+        name: "Firefox"
+        description: "Open-source web browser by Mozilla"
+        install:
+          apt:
+            packages: ["firefox"]
+            method: "native"
+          dnf:
+            packages: ["firefox"]
+            method: "native"
+          pacman:
+            packages: ["firefox"]
+            method: "native"
+          flatpak:
+            id: "org.mozilla.firefox"
+            remote: "flathub"
+        tags: ["essential", "browser", "popular"]
+      
+      - id: "chromium"
+        name: "Chromium"
+        description: "Open-source web browser"
+        install:
+          apt:
+            packages: ["chromium-browser"]
+            method: "native"
+          dnf:
+            packages: ["chromium"]
+            method: "native"
+          pacman:
+            packages: ["chromium"]
+            method: "native"
+          flatpak:
+            id: "org.chromium.Chromium"
+            remote: "flathub"
+        tags: ["browser"]
+
+  - name: "Development Tools"
+    icon: "⚙️"
+    applications:
+      - id: "git"
+        name: "Git"
+        description: "Distributed version control system"
+        install:
+          apt:
+            packages: ["git"]
+            method: "native"
+          dnf:
+            packages: ["git"]
+            method: "native"
+          pacman:
+            packages: ["git"]
+            method: "native"
+        tags: ["essential", "development", "version-control"]
+      
+      - id: "vscode"
+        name: "Visual Studio Code"
+        description: "Code editor by Microsoft"
+        install:
+          flatpak:
+            id: "com.visualstudio.code"
+            remote: "flathub"
+        tags: ["development", "editor", "popular"]
+      
+      - id: "python3"
+        name: "Python 3"
+        description: "Python programming language and runtime"
+        install:
+          apt:
+            packages: ["python3", "python3-pip", "python3-venv"]
+            method: "native"
+          dnf:
+            packages: ["python3", "python3-pip"]
+            method: "native"
+          pacman:
+            packages: ["python", "python-pip"]
+            method: "native"
+        tags: ["development", "programming", "essential"]
+
+  - name: "Multimedia"
+    icon: "🎵"
+    applications:
+      - id: "vlc"
+        name: "VLC Media Player"
+        description: "Versatile multimedia player"
+        install:
+          apt:
+            packages: ["vlc"]
+            method: "native"
+          dnf:
+            packages: ["vlc"]
+            method: "native"
+          pacman:
+            packages: ["vlc"]
+            method: "native"
+          flatpak:
+            id: "org.videolan.VLC"
+            remote: "flathub"
+        tags: ["multimedia", "video", "popular"]
+      
+      - id: "gimp"
+        name: "GIMP"
+        description: "GNU Image Manipulation Program"
+        install:
+          apt:
+            packages: ["gimp"]
+            method: "native"
+          dnf:
+            packages: ["gimp"]
+            method: "native"
+          pacman:
+            packages: ["gimp"]
+            method: "native"
+          flatpak:
+            id: "org.gimp.GIMP"
+            remote: "flathub"
+        tags: ["graphics", "image-editing"]
+
+  - name: "Utilities"
+    icon: "🛠️"
+    applications:
+      - id: "htop"
+        name: "htop"
+        description: "Interactive process viewer"
+        install:
+          apt:
+            packages: ["htop"]
+            method: "native"
+          dnf:
+            packages: ["htop"]
+            method: "native"
+          pacman:
+            packages: ["htop"]
+            method: "native"
+        tags: ["utility", "system-monitor"]
+      
+      - id: "curl"
+        name: "curl"
+        description: "Command-line tool for transferring data"
+        install:
+          apt:
+            packages: ["curl"]
+            method: "native"
+          dnf:
+            packages: ["curl"]
+            method: "native"
+          pacman:
+            packages: ["curl"]
+            method: "native"
+        tags: ["utility", "network", "essential"]
+      
+      - id: "wget"
+        name: "wget"
+        description: "Network downloader"
+        install:
+          apt:
+            packages: ["wget"]
+            method: "native"
+          dnf:
+            packages: ["wget"]
+            method: "native"
+          pacman:
+            packages: ["wget"]
+            method: "native"
+        tags: ["utility", "network", "essential"]

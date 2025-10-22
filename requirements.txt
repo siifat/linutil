@@ -1,0 +1,5 @@
+# Core dependencies
+textual>=0.63.0
+pyyaml>=6.0
+rich>=13.7.0
+click>=8.1.0
