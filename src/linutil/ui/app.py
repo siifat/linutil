@@ -5,7 +5,7 @@ The main TUI application using Textual framework.
 """
 
 from textual.app import App, ComposeResult
-from textual.containers import Container, Vertical, Horizontal
+from textual.containers import Container, Vertical, Horizontal, ScrollableContainer
 from textual.widgets import Header, Footer, Button, Static, Label
 from textual.binding import Binding
 from textual.screen import Screen
@@ -13,6 +13,7 @@ from textual.screen import Screen
 from linutil.core.distro_detector import detect_distribution, DistroInfo, DistroDetectionError
 from linutil.core.config_loader import ConfigLoader, ConfigLoadError
 from linutil.core.executor import PrivilegeHandler, CommandExecutor
+from linutil.core.terminal_executor import TerminalExecutor
 from linutil.managers.base_manager import PackageManagerFactory
 from linutil.managers.apt_manager import AptManager
 from linutil.managers.dnf_manager import DnfManager
@@ -112,12 +113,11 @@ class UpdateScreen(Screen):
         super().__init__()
         self.package_manager = package_manager
         self.privilege_handler = privilege_handler
-        self.is_updating = False
     
     def compose(self) -> ComposeResult:
         """Create child widgets."""
         yield Header()
-        yield Container(
+        yield ScrollableContainer(
             Vertical(
                 Static(""),
                 Label("🔄 System Update", classes="screen-title"),
@@ -125,10 +125,13 @@ class UpdateScreen(Screen):
                 Label("This will update all installed packages on your system."),
                 Label(f"Package Manager: {self.package_manager.upper()}", classes="pm-label"),
                 Static(""),
+                Label("The update will run in an interactive terminal where you can:", classes="info-label"),
+                Label("  • See real-time output", classes="info-label"),
+                Label("  • Enter your password when prompted", classes="info-label"),
+                Label("  • Confirm package installations", classes="info-label"),
+                Static(""),
                 Button("🔄 Start Update", id="btn-start-update", variant="success"),
                 Button("◀ Back", id="btn-back", variant="default"),
-                Static(""),
-                Label("", id="update-status", classes="status-label"),
                 Static(""),
                 id="update-container"
             ),
@@ -139,72 +142,58 @@ class UpdateScreen(Screen):
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Handle button presses."""
         if event.button.id == "btn-back":
-            if not self.is_updating:
-                self.app.pop_screen()
-            else:
-                self.app.notify("Update in progress, please wait...", severity="warning")
+            self.app.pop_screen()
         elif event.button.id == "btn-start-update":
-            if not self.is_updating:
-                self.start_update()
+            self.start_update()
     
     def start_update(self) -> None:
-        """Start system update."""
-        self.is_updating = True
-        status_label = self.query_one("#update-status", Label)
-        status_label.update("Starting system update...")
+        """Start system update interactively."""
+        # Build update command based on package manager
+        commands = []
         
-        # Disable button
-        btn = self.query_one("#btn-start-update", Button)
-        btn.disabled = True
+        if self.package_manager == 'apt':
+            commands = [
+                'apt update',
+                'apt upgrade -y',
+                'apt autoremove -y'
+            ]
+        elif self.package_manager == 'dnf':
+            commands = [
+                'dnf check-update || true',  # Returns 100 if updates available
+                'dnf upgrade -y',
+                'dnf autoremove -y'
+            ]
+        elif self.package_manager == 'pacman':
+            commands = [
+                'pacman -Syu --noconfirm'
+            ]
+        else:
+            self.app.notify(f"Package manager {self.package_manager} not supported", severity="error")
+            return
         
-        self.app.notify("System update started!", severity="information")
+        # Run in interactive terminal
+        description = f"System Update ({self.package_manager.upper()})"
         
-        # Run update in background
-        self.run_worker(self._perform_update(), name="system_update")
-    
-    async def _perform_update(self) -> None:
-        """Perform the system update."""
-        status_label = self.query_one("#update-status", Label)
+        with self.app.suspend():
+            executor = TerminalExecutor()
+            result = executor.execute_with_confirmation(
+                commands=commands,
+                use_sudo=True,
+                description=description,
+                warning="This will update all packages on your system."
+            )
         
-        try:
-            # Create package manager
-            executor = CommandExecutor(self.privilege_handler)
-            pm_factory = PackageManagerFactory
-            
-            manager = pm_factory.create(self.package_manager, executor=executor)
-            
-            if not manager:
-                status_label.update(f"Error: Package manager {self.package_manager} not available")
-                return
-            
-            def progress_callback(msg: str):
-                status_label.update(msg)
-            
-            # Run upgrade
-            success = await manager.upgrade_system(on_progress=progress_callback)
-            
-            if success:
-                status_label.update("✓ System update completed successfully!")
-                self.app.notify(
-                    "System updated successfully!",
-                    severity="information"
-                )
-            else:
-                status_label.update("❌ System update failed!")
-                self.app.notify(
-                    "System update failed. Check the status for details.",
-                    severity="error"
-                )
-        
-        except Exception as e:
-            status_label.update(f"❌ Error: {str(e)}")
-            self.app.notify(f"Update failed: {str(e)}", severity="error")
-        
-        finally:
-            self.is_updating = False
-            # Re-enable button
-            btn = self.query_one("#btn-start-update", Button)
-            btn.disabled = False
+        # Show result
+        if result.success:
+            self.app.notify(
+                "System updated successfully!",
+                severity="information"
+            )
+        else:
+            self.app.notify(
+                "Update failed or was cancelled.",
+                severity="error"
+            )
 
 
 class LinUtilApp(App):
@@ -268,6 +257,11 @@ class LinUtilApp(App):
         text-align: center;
         color: $text-muted;
         text-style: italic;
+    }
+    
+    .info-label {
+        color: $text-muted;
+        margin: 0 2;
     }
     
     .status-label {

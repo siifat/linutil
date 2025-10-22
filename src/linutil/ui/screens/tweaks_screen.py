@@ -12,6 +12,7 @@ from textual.screen import Screen
 
 from linutil.core.config_loader import TweakConfig, TweakDefinition
 from linutil.core.executor import PrivilegeHandler, CommandExecutor
+from linutil.core.terminal_executor import TerminalExecutor
 
 
 class TweakCheckbox(Horizontal):
@@ -172,7 +173,7 @@ class TweaksScreen(Screen):
         self.app.notify("All selections cleared", severity="information")
     
     def action_apply(self) -> None:
-        """Apply selected tweaks."""
+        """Apply selected tweaks interactively."""
         # Collect selected tweaks
         selected = []
         
@@ -187,132 +188,61 @@ class TweaksScreen(Screen):
             )
             return
         
-        # Update status
-        status_label = self.query_one("#status-label", Label)
-        status_label.update(f"Preparing to apply {len(selected)} tweak(s)...")
+        # Prepare commands
+        all_commands = []
+        requires_restart = False
         
-        # Apply in background
-        self.app.notify(
-            f"Applying {len(selected)} tweak(s)...",
-            severity="information",
-            timeout=5
-        )
+        for tweak in selected:
+            # Add comments to separate each tweak
+            all_commands.append(f'echo "=== Applying: {tweak.name} ==="')
+            
+            for cmd_data in tweak.commands:
+                command = cmd_data.get('command', '')
+                description = cmd_data.get('description', '')
+                
+                if description:
+                    all_commands.append(f'echo "  {description}..."')
+                
+                all_commands.append(command)
+            
+            if tweak.requires_restart:
+                requires_restart = True
         
-        # Run application
-        self.run_worker(
-            self._apply_tweaks(selected),
-            name="apply_tweaks"
-        )
-    
-    async def _apply_tweaks(self, tweaks: list[TweakDefinition]) -> None:
-        """
-        Apply tweaks in the background.
+        if not all_commands:
+            self.app.notify("No commands to execute!", severity="warning")
+            return
         
-        Args:
-            tweaks: List of tweaks to apply
-        """
-        status_label = self.query_one("#status-label", Label)
+        # Build description
+        description = f"Applying {len(selected)} system tweak(s):\n"
+        for tweak in selected:
+            description += f"  • {tweak.name}\n"
         
-        try:
-            executor = CommandExecutor(self.privilege_handler)
-            
-            applied_count = 0
-            skipped_count = 0
-            failed_count = 0
-            requires_restart = False
-            
-            for i, tweak in enumerate(tweaks):
-                status_label.update(
-                    f"[{i+1}/{len(tweaks)}] Applying: {tweak.name}..."
-                )
-                
-                # Check if already applied (if verification exists)
-                if tweak.verification and tweak.idempotent:
-                    check_cmd = tweak.verification.get('check_command', '')
-                    success_pattern = tweak.verification.get('success_pattern', '')
-                    
-                    if check_cmd:
-                        check_result = await executor.execute(
-                            check_cmd,
-                            use_sudo=False
-                        )
-                        
-                        # Check if already applied
-                        if success_pattern:
-                            import re
-                            if re.search(success_pattern, check_result.stdout):
-                                status_label.update(
-                                    f"⊘ Skipped: {tweak.name} (already applied)"
-                                )
-                                skipped_count += 1
-                                continue
-                
-                # Apply the tweak (execute all commands)
-                all_success = True
-                
-                for cmd_data in tweak.commands:
-                    command = cmd_data.get('command', '')
-                    description = cmd_data.get('description', '')
-                    
-                    if description:
-                        status_label.update(f"  {description}...")
-                    
-                    result = await executor.execute(
-                        command,
-                        use_sudo=True,
-                        timeout=300
-                    )
-                    
-                    if not result.success:
-                        status_label.update(
-                            f"❌ Failed: {tweak.name} - {result.stderr[:100]}"
-                        )
-                        failed_count += 1
-                        all_success = False
-                        break
-                
-                if all_success:
-                    status_label.update(f"✓ Applied: {tweak.name}")
-                    applied_count += 1
-                    
-                    if tweak.requires_restart:
-                        requires_restart = True
-            
-            # Final status
-            summary = f"✓ Applied: {applied_count}"
-            if skipped_count > 0:
-                summary += f", ⊘ Skipped: {skipped_count}"
-            if failed_count > 0:
-                summary += f", ❌ Failed: {failed_count}"
-            
-            status_label.update(summary)
-            
-            # Notify user
+        warning = None
+        if requires_restart:
+            warning = "Some tweaks require a system restart to take effect."
+        
+        # Run in interactive terminal
+        with self.app.suspend():
+            executor = TerminalExecutor()
+            result = executor.execute_with_confirmation(
+                commands=all_commands,
+                use_sudo=True,
+                description=description,
+                warning=warning
+            )
+        
+        # Show result
+        if result.success:
+            msg = "Tweaks applied successfully!"
             if requires_restart:
-                self.app.notify(
-                    "⚠ System restart required for some tweaks to take effect!",
-                    severity="warning",
-                    timeout=10
-                )
-            
-            if failed_count == 0:
-                self.app.notify(
-                    f"Successfully applied {applied_count} tweak(s)!",
-                    severity="information"
-                )
-            else:
-                self.app.notify(
-                    f"Completed with {failed_count} error(s)",
-                    severity="error"
-                )
-            
-        except Exception as e:
-            status_label.update(f"❌ Error: {str(e)}")
+                msg += " Please restart your system."
+            self.app.notify(msg, severity="information")
+        else:
             self.app.notify(
-                f"Tweak application failed: {str(e)}",
+                "Tweak application failed or was cancelled.",
                 severity="error"
             )
-
+    
 
 # CSS for the tweaks screen
 TWEAKS_SCREEN_CSS = """
