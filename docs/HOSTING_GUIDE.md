@@ -7,7 +7,7 @@ This guide explains how to set up a custom short URL for your LinUtil installer,
 GitHub automatically serves raw files, so you can use:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/yourusername/linutil/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/siifat/linutil/main/install.sh | bash
 ```
 
 ### Make it shorter with a custom domain:
@@ -21,7 +21,7 @@ Create `docs/linux` file:
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="refresh" content="0; url=https://raw.githubusercontent.com/yourusername/linutil/main/install.sh">
+    <meta http-equiv="refresh" content="0; url=https://raw.githubusercontent.com/siifat/linutil/main/install.sh">
 </head>
 <body>
     Redirecting to LinUtil installer...
@@ -40,7 +40,7 @@ curl -fsSL https://yourname.com/linux | bash
 
 ### Git.io (if still available)
 ```bash
-curl -i https://git.io -F "url=https://raw.githubusercontent.com/yourusername/linutil/main/install.sh"
+curl -i https://git.io -F "url=https://raw.githubusercontent.com/siifat/linutil/main/install.sh"
 ```
 
 ### Bit.ly, TinyURL, or Custom Shortener
@@ -59,15 +59,15 @@ server {
     server_name yourname.com www.yourname.com;
     
     location /linux {
-        return 302 https://raw.githubusercontent.com/yourusername/linutil/main/install.sh;
+        return 302 https://raw.githubusercontent.com/siifat/linutil/main/install.sh;
     }
     
     location /linuxdev {
-        return 302 https://raw.githubusercontent.com/yourusername/linutil/dev/install.sh;
+        return 302 https://raw.githubusercontent.com/siifat/linutil/dev/install.sh;
     }
     
     location = / {
-        return 302 https://github.com/yourusername/linutil;
+        return 302 https://github.com/siifat/linutil;
     }
 }
 ```
@@ -105,9 +105,9 @@ public/
 
 3. **Set up redirects** in `_redirects` file:
 ```
-/linux    https://raw.githubusercontent.com/yourusername/linutil/main/install.sh    302
-/linuxdev https://raw.githubusercontent.com/yourusername/linutil/dev/install.sh     302
-/         https://github.com/yourusername/linutil                                   302
+/linux    https://raw.githubusercontent.com/siifat/linutil/main/install.sh    302
+/linuxdev https://raw.githubusercontent.com/siifat/linutil/dev/install.sh     302
+/         https://github.com/siifat/linutil                                   302
 ```
 
 4. **Deploy** and your URL is ready:
@@ -121,8 +121,8 @@ curl -fsSL https://yourname.com/linux | bash
 
 2. **Create `_redirects` file**:
 ```
-/linux    https://raw.githubusercontent.com/yourusername/linutil/main/install.sh    302
-/linuxdev https://raw.githubusercontent.com/yourusername/linutil/dev/install.sh     302
+/linux    https://raw.githubusercontent.com/siifat/linutil/main/install.sh    302
+/linuxdev https://raw.githubusercontent.com/siifat/linutil/dev/install.sh     302
 ```
 
 3. **Deploy** your site

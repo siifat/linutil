@@ -22,12 +22,12 @@ A modern, distro-agnostic TUI (Terminal User Interface) application for streamli
 ### One-Line Installation (Recommended)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/yourusername/linutil/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/siifat/linutil/main/install.sh | bash
 ```
 
 Or using wget:
 ```bash
-wget -qO- https://raw.githubusercontent.com/yourusername/linutil/main/install.sh | bash
+wget -qO- https://raw.githubusercontent.com/siifat/linutil/main/install.sh | bash
 ```
 
 This automatically:
@@ -42,7 +42,7 @@ After installation: `source ~/.bashrc && linutil`
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/linutil.git
+git clone https://github.com/siifat/linutil.git
 cd linutil
 
 # Create a virtual environment
@@ -111,7 +111,7 @@ When you launch LinUtil, you'll see the welcome screen with:
 To update LinUtil to the latest version:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/yourusername/linutil/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/siifat/linutil/main/install.sh | bash
 ```
 
 Or manually:
@@ -123,7 +123,7 @@ git pull && source venv/bin/activate && pip install --upgrade -e .
 ## 🗑️ Uninstalling
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/yourusername/linutil/main/uninstall.sh | bash
+curl -fsSL https://raw.githubusercontent.com/siifat/linutil/main/uninstall.sh | bash
 ```
 
 ## 🎯 Supported Distributions

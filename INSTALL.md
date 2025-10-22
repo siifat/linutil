@@ -5,13 +5,13 @@
 Install LinUtil with a single command:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/yourusername/linutil/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/siifat/linutil/main/install.sh | bash
 ```
 
 Or using wget:
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/yourusername/linutil/main/install.sh | bash
+wget -qO- https://raw.githubusercontent.com/siifat/linutil/main/install.sh | bash
 ```
 
 This will:
@@ -35,7 +35,7 @@ If you prefer to install manually:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/linutil.git
+git clone https://github.com/siifat/linutil.git
 cd linutil
 
 # Create virtual environment
@@ -54,7 +54,7 @@ linutil
 To update to the latest version, simply run the installer again:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/yourusername/linutil/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/siifat/linutil/main/install.sh | bash
 ```
 
 Or manually:
@@ -71,7 +71,7 @@ pip install --upgrade -e .
 To completely remove LinUtil from your system:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/yourusername/linutil/main/uninstall.sh | bash
+curl -fsSL https://raw.githubusercontent.com/siifat/linutil/main/uninstall.sh | bash
 ```
 
 Or manually:
@@ -99,7 +99,7 @@ If you don't have sudo access, you can still install LinUtil:
 ```bash
 # The installer will skip system dependencies
 # Make sure Python 3.10+, git, and pip are already installed
-curl -fsSL https://raw.githubusercontent.com/yourusername/linutil/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/siifat/linutil/main/install.sh | bash
 ```
 
 ### Custom installation directory
@@ -107,7 +107,7 @@ curl -fsSL https://raw.githubusercontent.com/yourusername/linutil/main/install.s
 ```bash
 # Set custom install location
 export INSTALL_DIR="$HOME/custom/path"
-curl -fsSL https://raw.githubusercontent.com/yourusername/linutil/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/siifat/linutil/main/install.sh | bash
 ```
 
 ## 🐛 Troubleshooting
@@ -178,7 +178,7 @@ chmod +x install.sh
 ### Using Git directly
 
 ```bash
-git clone https://github.com/yourusername/linutil.git ~/linutil
+git clone https://github.com/siifat/linutil.git ~/linutil
 cd ~/linutil
 python3 -m venv venv
 source venv/bin/activate
@@ -221,7 +221,7 @@ The one-line installer:
 
 To review the installer before running:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/yourusername/linutil/main/install.sh
+curl -fsSL https://raw.githubusercontent.com/siifat/linutil/main/install.sh
 ```
 
 ## 💡 Post-Installation
@@ -239,7 +239,7 @@ After installing LinUtil:
 If you encounter issues:
 - Check this guide for common problems
 - View the [main README](README.md)
-- Open an [issue on GitHub](https://github.com/yourusername/linutil/issues)
+- Open an [issue on GitHub](https://github.com/siifat/linutil/issues)
 - Check existing issues for solutions
 
 ---

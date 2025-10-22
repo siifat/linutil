@@ -1,6 +1,6 @@
 #!/bin/bash
 # LinUtil - Linux Post-Install Setup Tool
-# One-line installer: curl -fsSL https://raw.githubusercontent.com/yourusername/linutil/main/install.sh | bash
+# One-line installer: curl -fsSL https://raw.githubusercontent.com/siifat/linutil/main/install.sh | bash
 
 set -e
 
@@ -12,7 +12,7 @@ GREEN='\033[32m'
 CYAN='\033[36m'
 
 # Configuration
-REPO_URL="https://github.com/yourusername/linutil"
+REPO_URL="https://github.com/siifat/linutil"
 INSTALL_DIR="$HOME/.local/share/linutil"
 BIN_DIR="$HOME/.local/bin"
 VENV_DIR="$INSTALL_DIR/venv"
@@ -286,7 +286,7 @@ print_success() {
     print_color "$YELLOW" "  3. $VENV_DIR/bin/python -m linutil.main"
     echo ""
     print_color "$CYAN" "To update LinUtil in the future, run:"
-    print_color "$YELLOW" "  curl -fsSL https://raw.githubusercontent.com/yourusername/linutil/main/install.sh | bash"
+    print_color "$YELLOW" "  curl -fsSL https://raw.githubusercontent.com/siifat/linutil/main/install.sh | bash"
     echo ""
     print_color "$CYAN" "To uninstall LinUtil, run:"
     print_color "$YELLOW" "  rm -rf $INSTALL_DIR"
