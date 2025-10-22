@@ -19,7 +19,26 @@ A modern, distro-agnostic TUI (Terminal User Interface) application for streamli
 
 ## 🚀 Quick Start
 
-### Installation
+### One-Line Installation (Recommended)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/yourusername/linutil/main/install.sh | bash
+```
+
+Or using wget:
+```bash
+wget -qO- https://raw.githubusercontent.com/yourusername/linutil/main/install.sh | bash
+```
+
+This automatically:
+- Checks and installs requirements (Python 3.10+, git, pip)
+- Sets up everything in `~/.local/share/linutil`
+- Creates a launcher at `~/.local/bin/linutil`
+- Adds LinUtil to your PATH
+
+After installation: `source ~/.bashrc && linutil`
+
+### Manual Installation
 
 ```bash
 # Clone the repository
@@ -42,6 +61,7 @@ linutil
 - Python 3.10 or higher
 - Linux distribution (Fedora, Ubuntu, Debian, Arch, etc.)
 - Terminal size: minimum 80x24 characters
+- Internet connection for package installations
 
 ## 📖 Usage
 
@@ -86,12 +106,34 @@ When you launch LinUtil, you'll see the welcome screen with:
 - Arrow keys - Navigate items
 - Mouse hover - Highlights clickable rows
 
+## 🔄 Updating
+
+To update LinUtil to the latest version:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/yourusername/linutil/main/install.sh | bash
+```
+
+Or manually:
+```bash
+cd ~/.local/share/linutil
+git pull && source venv/bin/activate && pip install --upgrade -e .
+```
+
+## 🗑️ Uninstalling
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/yourusername/linutil/main/uninstall.sh | bash
+```
+
 ## 🎯 Supported Distributions
 
 Currently supported package managers:
-- **DNF** (Fedora, RHEL, CentOS)
-- **APT** (Ubuntu, Debian, Linux Mint)
-- **Pacman** (Arch Linux, Manjaro)
+- **DNF** (Fedora, RHEL, CentOS, Rocky Linux)
+- **APT** (Ubuntu, Debian, Linux Mint, Pop!_OS)
+- **Pacman** (Arch Linux, Manjaro, EndeavourOS)
+- **Zypper** (openSUSE, SLES)
+- **APK** (Alpine Linux)
 
 ## 🙏 Acknowledgments
 
