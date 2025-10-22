@@ -116,10 +116,6 @@ class AppsScreen(Screen):
             name = category.get('name', 'Unknown')
             apps = category.get('applications', [])
             
-            # Add spacing only before first category
-            if widgets:
-                widgets.append(Static(""))
-            
             widgets.append(
                 Label(
                     f"{icon} {name} ({len(apps)} apps)",

@@ -110,10 +110,6 @@ class TweaksScreen(Screen):
             name = section.get('name', 'Unknown')
             tweaks = section.get('tweaks', [])
             
-            # Add spacing only before non-first sections
-            if widgets:
-                widgets.append(Static(""))
-            
             widgets.append(
                 Label(
                     f"{icon} {name} ({len(tweaks)} tweaks)",
